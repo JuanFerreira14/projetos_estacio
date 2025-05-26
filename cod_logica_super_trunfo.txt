@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <string.h>
+
+// Cartas e estrutura de dados
+typedef struct {
+    char nome[30];
+    int populacao;
+    float area;
+    float pib;
+    int pontosTuristicos;
+    float densidade;  // População / área
+} Carta;
+
+// Protótipos
+void mostrarMenu(int excluir, int *escolha);
+int atributoValido(int opcao, int excluir);
+float getValorAtributo(Carta c, int atributo);
+void mostrarAtributoNome(int atributo);
+void calcularDensidade(Carta* c);
+
+int main() {
+    // Cartas dos países
+    Carta c1, c2;
+
+    // Inicializa dados de entrada (pode ser modificado para entrada dinâmica)
+    printf("Digite os dados para a Carta 1 (ex: Brasil):\n");
+    printf("Nome: ");
+    scanf(" %[^\n]", c1.nome);
+    printf("População: ");
+    scanf("%d", &c1.populacao);
+    printf("Área (km²): ");
+    scanf("%f", &c1.area);
+    printf("PIB (em bilhões): ");
+    scanf("%f", &c1.pib);
+    printf("Número de Pontos Turísticos: ");
+    scanf("%d", &c1.pontosTuristicos);
+
+    printf("\nDigite os dados para a Carta 2 (ex: Argentina):\n");
+    printf("Nome: ");
+    scanf(" %[^\n]", c2.nome);
+    printf("População: ");
+    scanf("%d", &c2.populacao);
+    printf("Área (km²): ");
+    scanf("%f", &c2.area);
+    printf("PIB (em bilhões): ");
+    scanf("%f", &c2.pib);
+    printf("Número de Pontos Turísticos: ");
+    scanf("%d", &c2.pontosTuristicos);
+
+    // Calculando densidade
+    calcularDensidade(&c1);
+    calcularDensidade(&c2);
+
+    // Escolha dos atributos para comparação
+    int escolha1 = 0, escolha2 = 0;
+    printf("\nEscolha o primeiro atributo para comparar:\n");
+    mostrarMenu(-1, &escolha1);
+
+    printf("\nEscolha o segundo atributo para comparar (diferente do primeiro):\n");
+    mostrarMenu(escolha1, &escolha2);
+
+    printf("\n--- Comparação entre %s e %s ---\n\n", c1.nome, c2.nome);
+
+    // Pegando os valores dos atributos para cada carta
+    float val1_attr1 = getValorAtributo(c1, escolha1);
+    float val2_attr1 = getValorAtributo(c2, escolha1);
+
+    float val1_attr2 = getValorAtributo(c1, escolha2);
+    float val2_attr2 = getValorAtributo(c2, escolha2);
+
+    // Exibe os valores
+    printf("Atributo 1: ");
+    mostrarAtributoNome(escolha1);
+    printf("\n%s: %.2f\n%s: %.2f\n", c1.nome, val1_attr1, c2.nome, val2_attr1);
+
+    printf("\nAtributo 2: ");
+    mostrarAtributoNome(escolha2);
+    printf("\n%s: %.2f\n%s: %.2f\n", c1.nome, val1_attr2, c2.nome, val2_attr2);
+
+    // Comparação por atributo (com regra inversa para densidade = 5)
+    int vence1_attr1 = 0, vence1_attr2 = 0;
+
+    if (escolha1 == 5) // Densidade: menor vence
+        vence1_attr1 = (val1_attr1 < val2_attr1) ? 1 : 0;
+    else
+        vence1_attr1 = (val1_attr1 > val2_attr1) ? 1 : 0;
+
+    if (escolha2 == 5)
+        vence1_attr2 = (val1_attr2 < val2_attr2) ? 1 : 0;
+    else
+        vence1_attr2 = (val1_attr2 > val2_attr2) ? 1 : 0;
+
+    // Soma dos valores (invertendo densidade para poder comparar corretamente)
+    float val1_soma_attr1 = (escolha1 == 5) ? (1 / val1_attr1) : val1_attr1;
+    float val2_soma_attr1 = (escolha1 == 5) ? (1 / val2_attr1) : val2_attr1;
+
+    float val1_soma_attr2 = (escolha2 == 5) ? (1 / val1_attr2) : val1_attr2;
+    float val2_soma_attr2 = (escolha2 == 5) ? (1 / val2_attr2) : val2_attr2;
+
+    float soma1 = val1_soma_attr1 + val1_soma_attr2;
+    float soma2 = val2_soma_attr1 + val2_soma_attr2;
+
+    printf("\nSoma dos atributos:\n%s: %.2f\n%s: %.2f\n", c1.nome, soma1, c2.nome, soma2);
+
+    // Resultado final
+    if (soma1 > soma2)
+        printf("\nResultado final: %s venceu a rodada!\n", c1.nome);
+    else if (soma2 > soma1)
+        printf("\nResultado final: %s venceu a rodada!\n", c2.nome);
+    else
+        printf("\nResultado final: Empate!\n");
+
+    return 0;
+}
+
+// Função para exibir menu, excluindo um atributo (excluir = -1 para nenhum)
+void mostrarMenu(int excluir, int *escolha) {
+    int opcao;
+    do {
+        printf("1 - Populacao\n");
+        printf("2 - Area\n");
+        printf("3 - PIB\n");
+        printf("4 - Pontos Turisticos\n");
+        printf("5 - Densidade Demografica\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        if (!atributoValido(opcao, excluir)) {
+            printf("Opcao invalida ou ja escolhida, tente novamente.\n");
+        }
+    } while (!atributoValido(opcao, excluir));
+    *escolha = opcao;
+}
+
+// Verifica se a opção é válida e diferente da opção a excluir
+int atributoValido(int opcao, int excluir) {
+    if (opcao < 1 || opcao > 5)
+        return 0;
+    if (opcao == excluir)
+        return 0;
+    return 1;
+}
+
+// Retorna o valor do atributo da carta baseado na escolha
+float getValorAtributo(Carta c, int atributo) {
+    switch (atributo) {
+        case 1: return (float)c.populacao;
+        case 2: return c.area;
+        case 3: return c.pib;
+        case 4: return (float)c.pontosTuristicos;
+        case 5: return c.densidade;
+        default: return 0.0;
+    }
+}
+
+// Exibe o nome do atributo baseado na escolha
+void mostrarAtributoNome(int atributo) {
+    switch (atributo) {
+        case 1: printf("Populacao"); break;
+        case 2: printf("Area"); break;
+        case 3: printf("PIB"); break;
+        case 4: printf("Pontos Turisticos"); break;
+        case 5: printf("Densidade Demografica"); break;
+        default: printf("Atributo Desconhecido"); break;
+    }
+}
+
+// Função para calcular a densidade populacional
+void calcularDensidade(Carta* c) {
+    c->densidade = c->populacao / c->area;
+}

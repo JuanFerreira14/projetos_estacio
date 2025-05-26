@@ -1,0 +1,86 @@
+#include <stdio.h>
+
+// Função recursiva para mover Torre para a direita
+void moverTorre(int casas) {
+    if (casas <= 0) return;
+    printf("Direita\n");
+    moverTorre(casas - 1);
+}
+
+// Função recursiva para mover Rainha para a esquerda
+void moverRainha(int casas) {
+    if (casas <= 0) return;
+    printf("Esquerda\n");
+    moverRainha(casas - 1);
+}
+
+// Função recursiva para mover Bispo para cima e direita (diagonal)
+void moverBispoRecursivo(int casas) {
+    if (casas <= 0) return;
+    printf("Cima, Direita\n");
+    moverBispoRecursivo(casas - 1);
+}
+
+// Função para mover Bispo com loops aninhados (movimento diagonal)
+void moverBispoLoopsAninhados(int casasVerticais, int casasHorizontais) {
+    int i, j;
+    for (i = 0; i < casasVerticais; i++) {
+        for (j = 0; j < casasHorizontais; j++) {
+            printf("Cima, Direita\n");
+        }
+    }
+}
+
+// Função para movimentar Cavalo usando loops aninhados complexos
+// Movimento: 2 casas para cima e 1 para direita ("L")
+void moverCavalo() {
+    int casasParaCima = 2;
+    int casasParaDireita = 1;
+
+    // Loop externo para movimentar para cima
+    int i = 0;
+    while (i < casasParaCima) {
+        printf("Cima\n");
+        i++;
+    }
+
+    // Loop interno para movimentar para a direita
+    int j = 0;
+    while (j < casasParaDireita) {
+        printf("Direita\n");
+        j++;
+    }
+}
+
+int main() {
+    int casasTorre = 5;
+    int casasRainha = 8;
+    int casasBispo = 5;          // Casas diagonais para o Bispo
+    int casasBispoVertical = 5;  // Quantidade de casas verticais para o Bispo
+    int casasBispoHorizontal = 5; // Quantidade de casas horizontais para o Bispo
+    int casasCavaloVertical = 2; // Movimento vertical do Cavalo
+    int casasCavaloHorizontal = 1; // Movimento horizontal do Cavalo
+
+    // Movimentos das peças com recursão ou loops
+    printf("Movimento da Torre (5 casas para a direita):\n");
+    moverTorre(casasTorre);
+    printf("\n");
+
+    printf("Movimento do Bispo com recursão (5 casas diagonais):\n");
+    moverBispoRecursivo(casasBispo);
+    printf("\n");
+
+    printf("Movimento do Bispo com loops aninhados (5x5 casas diagonais):\n");
+    moverBispoLoopsAninhados(casasBispoVertical, casasBispoHorizontal);
+    printf("\n");
+
+    printf("Movimento da Rainha (8 casas para a esquerda):\n");
+    moverRainha(casasRainha);
+    printf("\n");
+
+    printf("Movimento do Cavalo (2 casas para cima e 1 para a direita):\n");
+    moverCavalo();
+    printf("\n");
+
+    return 0;
+}
